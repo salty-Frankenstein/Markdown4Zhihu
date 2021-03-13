@@ -134,7 +134,7 @@
 
 例：项 <img src="https://www.zhihu.com/equation?tex=M\equiv \lambda y:\alpha \to \beta .\lambda z:\alpha.yz" alt="M\equiv \lambda y:\alpha \to \beta .\lambda z:\alpha.yz" class="ee_img tr_noresize" eeimg="1"> 是否合法. 即找到上下文 <img src="https://www.zhihu.com/equation?tex=\Gamma" alt="\Gamma" class="ee_img tr_noresize" eeimg="1"> 和类型 <img src="https://www.zhihu.com/equation?tex=\rho" alt="\rho" class="ee_img tr_noresize" eeimg="1"> ，使得 <img src="https://www.zhihu.com/equation?tex=\Gamma \vdash M:\rho" alt="\Gamma \vdash M:\rho" class="ee_img tr_noresize" eeimg="1"> .
 
-首先 <img src="https://www.zhihu.com/equation?tex=\Gamma\equiv\empty" alt="\Gamma\equiv\empty" class="ee_img tr_noresize" eeimg="1"> 就可以，因为 <img src="https://www.zhihu.com/equation?tex=M" alt="M" class="ee_img tr_noresize" eeimg="1"> 中没有自由变量需要定型. 其次就是找到 <img src="https://www.zhihu.com/equation?tex=\rho" alt="\rho" class="ee_img tr_noresize" eeimg="1"> ：
+首先 <img src="https://www.zhihu.com/equation?tex=\Gamma\equiv\emptyset" alt="\Gamma\equiv\emptyset" class="ee_img tr_noresize" eeimg="1"> 就可以，因为 <img src="https://www.zhihu.com/equation?tex=M" alt="M" class="ee_img tr_noresize" eeimg="1"> 中没有自由变量需要定型. 其次就是找到 <img src="https://www.zhihu.com/equation?tex=\rho" alt="\rho" class="ee_img tr_noresize" eeimg="1"> ：
 
  <img src="https://www.zhihu.com/equation?tex=(n)\quad \lambda y.\alpha \to \beta.\lambda z:\alpha.yz\ :\ ?" alt="(n)\quad \lambda y.\alpha \to \beta.\lambda z:\alpha.yz\ :\ ?" class="ee_img tr_noresize" eeimg="1"> 
 
