@@ -83,14 +83,7 @@
 
 ### 二阶预定型项（Second order pre-typed  <img src="https://www.zhihu.com/equation?tex=\lambda" alt="\lambda" class="ee_img tr_noresize" eeimg="1"> -terms,  <img src="https://www.zhihu.com/equation?tex=\lambda2" alt="\lambda2" class="ee_img tr_noresize" eeimg="1"> -terms,  <img src="https://www.zhihu.com/equation?tex=\Lambda_\mathbb{T2}" alt="\Lambda_\mathbb{T2}" class="ee_img tr_noresize" eeimg="1"> ）
 
-$\mathbb{\Lambda_{T2}}=
-V|
-
-(\mathbb{\Lambda_{T2}\Lambda_{T2}})|
-
-(\Lambda_\mathbb{T2}\mathbb{T2})|
-
-(\lambda V:\mathbb{T2.\Lambda_{T2}})|
+$\mathbb{\Lambda_{T2}}=V|(\mathbb{\Lambda_{T2}\Lambda_{T2}})|(\Lambda_\mathbb{T2}\mathbb{T2})|(\lambda V:\mathbb{T2.\Lambda_{T2}})|
 
 (\lambda\mathbb{V}:*.\Lambda_\mathbb{T2})$.
 
