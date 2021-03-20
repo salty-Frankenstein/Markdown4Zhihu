@@ -47,7 +47,7 @@ $\lambda \alpha:*.\lambda x:\alpha.x$.
 
 $\lambda \alpha:*.\lambda x:\alpha.x\quad:\quad*\to(\alpha\to \alpha)$.
 
-然而问题是在上面的二阶表达式中，类型$\alpha$变成了一个绑定的变量，我们有理由认为$\lambda \alpha:*.\lambda x:\alpha.x$与$\lambda \beta:*.\lambda x:\beta.x$相同. 然而$\lambda \alpha:*.\lambda x:\alpha.x:*\to(\alpha\to\alpha)$，但$\lambda \beta:*.\lambda x:\beta.x:*\to(\beta\to\beta)$，相同的项有了不同的类型. 这是由于，我们认为左侧的$\alpha$和$\beta$是绑定的变量，而右侧的是自由变量. 因此我们引入一种新绑定：*类型绑定（type-binder）*或*$\Pi$绑定（$\Pi$-binder）*. 一个将*任意*类型$\alpha$到类型为$\alpha\to\alpha$的函数的类型记作$\Pi\alpha:*.\alpha\to\alpha$.
+然而问题是在上面的二阶表达式中，类型$\alpha$变成了一个绑定的变量，我们有理由认为$\lambda \alpha:*.\lambda x:\alpha.x$与$\lambda \beta:*.\lambda x:\beta.x$相同. 然而$\lambda \alpha:*.\lambda x:\alpha.x:*\to(\alpha\to\alpha)$，但$\lambda \beta:*.\lambda x:\beta.x:*\to(\beta\to\beta)$，相同的项有了不同的类型. 这是由于，我们认为左侧的$\alpha$和$\beta$是绑定的变量，而右侧的是自由变量. 因此我们引入一种新绑定：*类型绑定（type-binder）* 或 *$\Pi$绑定（$\Pi$-binder）*. 一个将*任意*类型$\alpha$到类型为$\alpha\to\alpha$的函数的类型记作$\Pi\alpha:*.\alpha\to\alpha$.
 
 我们简单推广$\alpha$变换，有$\Pi\alpha:*.\alpha\to\alpha\equiv_\alpha\Pi\beta:*.\beta\to\beta$. 此时我们有：
 $$
