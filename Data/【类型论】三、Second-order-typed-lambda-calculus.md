@@ -80,8 +80,7 @@ $\mathbb{T2=V|(T2\to T2)|(\Pi V:*.T2)}$，其中$\mathbb{V}$是类型变量集�
 
 ### 二阶预定型项（Second order pre-typed $\lambda$-terms, $\lambda2$-terms, $\Lambda_\mathbb{T2}$）
 
-$\mathbb{\Lambda_{T2}}=V|(\mathbb{\Lambda_{T2}\Lambda_{T2}})|(\Lambda_\mathbb{T2}\mathbb{T2})|(\lambda V:\mathbb{T2.\Lambda_{T2}})|
-(\lambda\mathbb{V}:*.\Lambda_\mathbb{T2})$.
+$\mathbb{\Lambda_{T2}}=V|(\mathbb{\Lambda_{T2}\Lambda_{T2}})|(\Lambda_\mathbb{T2}\mathbb{T2})|(\lambda V:\mathbb{T2.\Lambda_{T2}})|(\lambda\mathbb{V}:*.\Lambda_\mathbb{T2})$.
 
 此时我们有两种变量：对象变量（object variables）$V$（如$x,\ y,\ \dots$）和类型变量（type variables）$\mathbb{V}$（如$\alpha,\ \beta,\ \dots$）. 我们有一阶抽象$(\lambda V:\mathbb{T2.\Lambda_{T2}})$和二阶抽象$(\lambda\mathbb{V}:*.\Lambda_\mathbb{T2})$，一阶应用$(\mathbb{\Lambda_{T2}\Lambda_{T2}})$和二阶应用$(\Lambda_\mathbb{T2}\mathbb{T2})$.
 
