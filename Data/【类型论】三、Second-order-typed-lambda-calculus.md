@@ -32,8 +32,8 @@ $\lambda \alpha:*.\lambda x:\alpha.x$.
 
 得到的这个项称为*多态（polymorphic）*恒等函数. 注意这还不是恒等函数本身，我们还需要进行一次（二阶）应用和Beta归约得到一个真正的恒等函数：
 
-- $(\lambda \alpha :*\ \lambda x:\alpha . x)nat \to_\beta \lambda x:nat.x$，为自然数上的恒等函数
-- $(\lambda \alpha :*\ \lambda x:\alpha . x)(nat\to bool) \to_\beta \lambda x:(nat\to bool).x$，为$nat\to bool$上的.
+- $(\lambda \alpha :*.\ \lambda x:\alpha . x)nat \to_\beta \lambda x:nat.x$，为自然数上的恒等函数
+- $(\lambda \alpha :*.\ \lambda x:\alpha . x)(nat\to bool) \to_\beta \lambda x:(nat\to bool).x$，为$nat\to bool$上的.
 
 因此我们还需要增加二阶的抽象和应用，以及对于二阶项的Beta归约.
 
@@ -51,9 +51,9 @@ $\lambda \alpha:*.\lambda x:\alpha.x\quad:\quad*\to(\alpha\to \alpha)$.
 
 我们简单推广$\alpha$变换，有$\Pi\alpha:*.\alpha\to\alpha\equiv_\alpha\Pi\beta:*.\beta\to\beta$. 此时我们有：
 $$
-\lambda \alpha:*.\lambda x:\alpha.x\quad:\quad\Pi\alpha:*\to(\alpha\to\alpha)\\
+\lambda \alpha:*.\lambda x:\alpha.x\quad:\quad\Pi\alpha:*.\alpha\to\alpha\\
 
-\equiv\quad\lambda \beta:*.\lambda x:\beta.x\quad:\quad\Pi\beta:*\to(\beta\to\beta)
+\equiv\quad\lambda \beta:*.\lambda x:\beta.x\quad:\quad\Pi\beta:*.\beta\to\beta
 $$
 
 > 在数学中，$\Pi$用于乘积，而$\Pi$类型也称作积类型.
