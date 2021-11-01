@@ -191,8 +191,7 @@ level 4：即 <img src="https://www.zhihu.com/equation?tex=\square" alt="\square
 至此所有的 <img src="https://www.zhihu.com/equation?tex=\lambda\underline{\omega}" alt="\lambda\underline{\omega}" class="ee_img tr_noresize" eeimg="1"> 的规则：
 
 
-<img src="https://www.zhihu.com/equation?tex=\begin{align}
-(sort)&\ \emptyset\ \vdash\ \ast:\square\\
+<img src="https://www.zhihu.com/equation?tex=(sort)&\ \emptyset\ \vdash\ \ast:\square\\
 \ \\
 (var)&\ \dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad若x\notin\Gamma \\
 \ \\
@@ -205,9 +204,7 @@ level 4：即 <img src="https://www.zhihu.com/equation?tex=\square" alt="\square
 (abst)&\ \dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ A\to\ B:s}{\Gamma\ \vdash\ \lambda x:A.\ M\ :\ A\to B}\\
 \ \\
 (conv)&\ \dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad若B=_\beta B'
-\end{align}
-" alt="\begin{align}
-(sort)&\ \emptyset\ \vdash\ \ast:\square\\
+" alt="(sort)&\ \emptyset\ \vdash\ \ast:\square\\
 \ \\
 (var)&\ \dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad若x\notin\Gamma \\
 \ \\
@@ -220,7 +217,6 @@ level 4：即 <img src="https://www.zhihu.com/equation?tex=\square" alt="\square
 (abst)&\ \dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ A\to\ B:s}{\Gamma\ \vdash\ \lambda x:A.\ M\ :\ A\to B}\\
 \ \\
 (conv)&\ \dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad若B=_\beta B'
-\end{align}
 " class="ee_img tr_noresize" eeimg="1">
 
 ##  <img src="https://www.zhihu.com/equation?tex=\lambda\underline{\omega}" alt="\lambda\underline{\omega}" class="ee_img tr_noresize" eeimg="1"> 的性质

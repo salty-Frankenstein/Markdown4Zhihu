@@ -191,7 +191,6 @@ $\dfrac{(18)\ \Gamma\ \vdash\ x:(\lambda \alpha: \ast .\ \alpha\to\alpha)\ \beta
 至此所有的$\lambda\underline{\omega}$的规则：
 
 $$
-\begin{align}
 (sort)&\ \emptyset\ \vdash\ \ast:\square\\
 \ \\
 (var)&\ \dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad若x\notin\Gamma \\
@@ -205,7 +204,6 @@ $$
 (abst)&\ \dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ A\to\ B:s}{\Gamma\ \vdash\ \lambda x:A.\ M\ :\ A\to B}\\
 \ \\
 (conv)&\ \dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad若B=_\beta B'
-\end{align}
 $$
 
 ## $\lambda\underline{\omega}$的性质
