@@ -36,7 +36,7 @@ $$
 
    因为$n:nat$且$S_n:\ast$，所以$\lambda n:nat.S_n$有类型$nat\to\ast$.
 
-   一个常用的例子是：设$\textlangle v_1,\cdots,v_n \textrangle$为$n$个自然数的序列，则$V_n=\{\textlangle v_1,\cdots,v_n\textrangle|v_i\in\mathbb{N}\}$是所有长度为$n$的自然数序列（向量），$\lambda n:nat.V_n$把$n$映射到所有长度为$n$的向量集合.
+   一个常用的例子是：设$\langle v_1,\cdots,v_n \rangle$为$n$个自然数的序列，则$V_n=\{\langle v_1,\cdots,v_n\rangle|v_i\in\mathbb{N}\}$是所有长度为$n$的自然数序列（向量），$\lambda n:nat.V_n$把$n$映射到所有长度为$n$的向量集合.
 
 2. 对任意$n:nat$，设$P_n$为命题. 那么$\lambda n:nat.P_n$也是一个类型（构造子），依赖于项$n$. 也可以说$\lambda n:nat. P_n$是一个由项$n$映射到命题$P_n$的函数. 这样的函数表达了逻辑中称为**谓词**（predicate）的东西. 例如，设$P_n$为命题“$n$为质数”，$\lambda n:nat.P_n$则是一个自然数是质数的谓词. 
 
