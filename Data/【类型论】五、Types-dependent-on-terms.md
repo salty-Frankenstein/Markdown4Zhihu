@@ -46,21 +46,19 @@ $$
 
 $\lambda{\rm P}$的派生规则和$\lambda\underline{\omega}$很类似：
 $$
-\begin{align}
-(sort)\quad&\emptyset\ \vdash\ \ast:\square\\
+(sort)\quad\emptyset\ \vdash\ \ast:\square\\
 \ \\
-(var)\quad&\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
+(var)\quad\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
 \ \\
-(weak)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
+(weak)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
 \ \\
-(form)\quad&\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
+(form)\quad\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
 \ \\
-(appl)\quad&\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
+(appl)\quad\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
 \ \\
-(abst)\quad&\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
+(abst)\quad\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
 \ \\
-(conv)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
-\end{align}
+(conv)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
 $$
 与$\lambda\underline{\omega}$的主要不同在：
 
@@ -80,7 +78,7 @@ $$
 
 **表记**：在$\lambda{\rm P}$中，如果确定$x$不在$B$中自由出现，我们可以把$\Pi x:A.B$记作$A\to B$. 不过，正式地说，在$\lambda{\rm P}$中只有$\Pi$-类型，没有$\to$-类型.
 
-> 如果$A$是有限类型，假设有两个元素$a_1,\ a_2$，那么$\Pi x:A.B$刚好就是$B[x:=a_1]\cross B[x:=a_2]$，即笛卡尔积. 因此$\Pi$-类型既可以看成笛卡尔积的推广，也可以看成函数空间的推广（若$x\notin FV(B)$，则$\Pi x:A.B$就是$A\to B$）. 
+> 如果$A$是有限类型，假设有两个元素$a_1,\ a_2$，那么$\Pi x:A.B$刚好就是$B[x:=a_1]\times B[x:=a_2]$，即笛卡尔积. 因此$\Pi$-类型既可以看成笛卡尔积的推广，也可以看成函数空间的推广（若$x\notin FV(B)$，则$\Pi x:A.B$就是$A\to B$）. 
 
 ## $\lambda{\rm P}$的派生例
 

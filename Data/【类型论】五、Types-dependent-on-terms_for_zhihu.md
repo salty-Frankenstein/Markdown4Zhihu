@@ -47,36 +47,32 @@ tags:
 
  <img src="https://www.zhihu.com/equation?tex=\lambda{\rm P}" alt="\lambda{\rm P}" class="ee_img tr_noresize" eeimg="1"> 的派生规则和 <img src="https://www.zhihu.com/equation?tex=\lambda\underline{\omega}" alt="\lambda\underline{\omega}" class="ee_img tr_noresize" eeimg="1"> 很类似：
 
-<img src="https://www.zhihu.com/equation?tex=\begin{align}
-(sort)\quad&\emptyset\ \vdash\ \ast:\square\\
+<img src="https://www.zhihu.com/equation?tex=(sort)\quad\emptyset\ \vdash\ \ast:\square\\
 \ \\
-(var)\quad&\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
+(var)\quad\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
 \ \\
-(weak)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
+(weak)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
 \ \\
-(form)\quad&\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
+(form)\quad\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
 \ \\
-(appl)\quad&\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
+(appl)\quad\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
 \ \\
-(abst)\quad&\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
+(abst)\quad\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
 \ \\
-(conv)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
-\end{align}
-" alt="\begin{align}
-(sort)\quad&\emptyset\ \vdash\ \ast:\square\\
+(conv)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
+" alt="(sort)\quad\emptyset\ \vdash\ \ast:\square\\
 \ \\
-(var)\quad&\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
+(var)\quad\dfrac{\Gamma\ \vdash\ A:s}{\Gamma,\ x:A\ \vdash\ x:A}\quad 若x\notin \Gamma\\
 \ \\
-(weak)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
+(weak)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ C:s}{\Gamma,\ x:C\ \vdash\ A:B}\quad 若 x\notin \Gamma\\
 \ \\
-(form)\quad&\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
+(form)\quad\dfrac{\Gamma\ \vdash\ A:\ast\quad\Gamma,\ x:A\ \vdash\ B:s}{\Gamma\ \vdash\ \Pi x:A.B:s}\\
 \ \\
-(appl)\quad&\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
+(appl)\quad\dfrac{\Gamma\ \vdash\ M:\Pi x:A.B\quad\Gamma\ \vdash\ N:A}{\Gamma\ \vdash\ M\ N\ :\ B[x:=N]}\\
 \ \\
-(abst)\quad&\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
+(abst)\quad\dfrac{\Gamma,\ x:A\ \vdash\ M:B\quad\Gamma\ \vdash\ \Pi x:A.B:s}{\Gamma\ \vdash\ \lambda x:A.M:\Pi x:A.B}\\
 \ \\
-(conv)\quad&\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
-\end{align}
+(conv)\quad\dfrac{\Gamma\ \vdash\ A:B\quad\Gamma\ \vdash\ B':s}{\Gamma\ \vdash\ A:B'}\quad 若B=_\beta B'
 " class="ee_img tr_noresize" eeimg="1">
 与 <img src="https://www.zhihu.com/equation?tex=\lambda\underline{\omega}" alt="\lambda\underline{\omega}" class="ee_img tr_noresize" eeimg="1"> 的主要不同在：
 
@@ -96,7 +92,7 @@ tags:
 
 **表记**：在 <img src="https://www.zhihu.com/equation?tex=\lambda{\rm P}" alt="\lambda{\rm P}" class="ee_img tr_noresize" eeimg="1"> 中，如果确定 <img src="https://www.zhihu.com/equation?tex=x" alt="x" class="ee_img tr_noresize" eeimg="1"> 不在 <img src="https://www.zhihu.com/equation?tex=B" alt="B" class="ee_img tr_noresize" eeimg="1"> 中自由出现，我们可以把 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.B" alt="\Pi x:A.B" class="ee_img tr_noresize" eeimg="1"> 记作 <img src="https://www.zhihu.com/equation?tex=A\to B" alt="A\to B" class="ee_img tr_noresize" eeimg="1"> . 不过，正式地说，在 <img src="https://www.zhihu.com/equation?tex=\lambda{\rm P}" alt="\lambda{\rm P}" class="ee_img tr_noresize" eeimg="1"> 中只有 <img src="https://www.zhihu.com/equation?tex=\Pi" alt="\Pi" class="ee_img tr_noresize" eeimg="1"> -类型，没有 <img src="https://www.zhihu.com/equation?tex=\to" alt="\to" class="ee_img tr_noresize" eeimg="1"> -类型.
 
-> 如果 <img src="https://www.zhihu.com/equation?tex=A" alt="A" class="ee_img tr_noresize" eeimg="1"> 是有限类型，假设有两个元素 <img src="https://www.zhihu.com/equation?tex=a_1,\ a_2" alt="a_1,\ a_2" class="ee_img tr_noresize" eeimg="1"> ，那么 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.B" alt="\Pi x:A.B" class="ee_img tr_noresize" eeimg="1"> 刚好就是 <img src="https://www.zhihu.com/equation?tex=B[x:=a_1]\cross B[x:=a_2]" alt="B[x:=a_1]\cross B[x:=a_2]" class="ee_img tr_noresize" eeimg="1"> ，即笛卡尔积. 因此 <img src="https://www.zhihu.com/equation?tex=\Pi" alt="\Pi" class="ee_img tr_noresize" eeimg="1"> -类型既可以看成笛卡尔积的推广，也可以看成函数空间的推广（若 <img src="https://www.zhihu.com/equation?tex=x\notin FV(B)" alt="x\notin FV(B)" class="ee_img tr_noresize" eeimg="1"> ，则 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.B" alt="\Pi x:A.B" class="ee_img tr_noresize" eeimg="1"> 就是 <img src="https://www.zhihu.com/equation?tex=A\to B" alt="A\to B" class="ee_img tr_noresize" eeimg="1"> ）. 
+> 如果 <img src="https://www.zhihu.com/equation?tex=A" alt="A" class="ee_img tr_noresize" eeimg="1"> 是有限类型，假设有两个元素 <img src="https://www.zhihu.com/equation?tex=a_1,\ a_2" alt="a_1,\ a_2" class="ee_img tr_noresize" eeimg="1"> ，那么 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.B" alt="\Pi x:A.B" class="ee_img tr_noresize" eeimg="1"> 刚好就是 <img src="https://www.zhihu.com/equation?tex=B[x:=a_1]\times B[x:=a_2]" alt="B[x:=a_1]\times B[x:=a_2]" class="ee_img tr_noresize" eeimg="1"> ，即笛卡尔积. 因此 <img src="https://www.zhihu.com/equation?tex=\Pi" alt="\Pi" class="ee_img tr_noresize" eeimg="1"> -类型既可以看成笛卡尔积的推广，也可以看成函数空间的推广（若 <img src="https://www.zhihu.com/equation?tex=x\notin FV(B)" alt="x\notin FV(B)" class="ee_img tr_noresize" eeimg="1"> ，则 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.B" alt="\Pi x:A.B" class="ee_img tr_noresize" eeimg="1"> 就是 <img src="https://www.zhihu.com/equation?tex=A\to B" alt="A\to B" class="ee_img tr_noresize" eeimg="1"> ）. 
 
 ##  <img src="https://www.zhihu.com/equation?tex=\lambda{\rm P}" alt="\lambda{\rm P}" class="ee_img tr_noresize" eeimg="1"> 的派生例
 
