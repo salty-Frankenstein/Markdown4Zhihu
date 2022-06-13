@@ -1,13 +1,3 @@
----
-title: 【类型论】五、Types dependent on terms
-date: 2021-11-01 19:58:23
-categories: 小课堂
-tags:
-     - 函数式
-     - 类型论
-     - 教程
----
-
 本文为*Type Theory and Formal Proof : An Introduction* 的笔记，纯个人向（
 
 ------
