@@ -36,7 +36,7 @@ tags:
 
 有了 <img src="https://www.zhihu.com/equation?tex=(form_{\lambda{\rm C}})" alt="(form_{\lambda{\rm C}})" class="ee_img tr_noresize" eeimg="1"> 规则，假设我们有一个函数 <img src="https://www.zhihu.com/equation?tex=\lambda x:A.\ b" alt="\lambda x:A.\ b" class="ee_img tr_noresize" eeimg="1"> ，由 <img src="https://www.zhihu.com/equation?tex=(abst)" alt="(abst)" class="ee_img tr_noresize" eeimg="1"> -规则得到它的类型为 <img src="https://www.zhihu.com/equation?tex=\Pi x:A.\ B" alt="\Pi x:A.\ B" class="ee_img tr_noresize" eeimg="1"> （那么 <img src="https://www.zhihu.com/equation?tex=b" alt="b" class="ee_img tr_noresize" eeimg="1"> 的类型也是 <img src="https://www.zhihu.com/equation?tex=B" alt="B" class="ee_img tr_noresize" eeimg="1"> ），那么由形成规则 <img src="https://www.zhihu.com/equation?tex=A:s_1" alt="A:s_1" class="ee_img tr_noresize" eeimg="1"> ， <img src="https://www.zhihu.com/equation?tex=B:s_2" alt="B:s_2" class="ee_img tr_noresize" eeimg="1"> 有四种可能：
 
-![2022-06-13 00-07-42 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【类型论】六、构造演算/2022-06-13 00-07-42 的屏幕截图.png)
+![2022-06-13 00-07-42 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/2022-06-13%2000-07-42%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 这四种可能在之前的四个类型系统中都可以实现，例如当 <img src="https://www.zhihu.com/equation?tex=(s_1,s_2)=(\square,\ast)" alt="(s_1,s_2)=(\square,\ast)" class="ee_img tr_noresize" eeimg="1"> ，对应 <img src="https://www.zhihu.com/equation?tex=\lambda 2" alt="\lambda 2" class="ee_img tr_noresize" eeimg="1"> 中依赖于类型的项.
 
@@ -50,17 +50,17 @@ tags:
 
 这三种可能性是互不依赖的，所以它们可以作为三个互相垂直的方向，得到一个类型系统的三维直角坐标：
 
-![2022-06-13 00-18-53 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【类型论】六、构造演算/2022-06-13 00-18-53 的屏幕截图.png)
+![2022-06-13 00-18-53 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/2022-06-13%2000-18-53%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 结合这三种可能性就得到了上面提到的 <img src="https://www.zhihu.com/equation?tex=\lambda {\rm C}" alt="\lambda {\rm C}" class="ee_img tr_noresize" eeimg="1"> 。同样的，也可以将 <img src="https://www.zhihu.com/equation?tex=\lambda{\to}" alt="\lambda{\to}" class="ee_img tr_noresize" eeimg="1"> 结合其中的两个可能性，得到的系统分别为 <img src="https://www.zhihu.com/equation?tex=\lambda \omega" alt="\lambda \omega" class="ee_img tr_noresize" eeimg="1"> ， <img src="https://www.zhihu.com/equation?tex=\lambda {\rm P}2" alt="\lambda {\rm P}2" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\lambda {\rm P}\underline\omega" alt="\lambda {\rm P}\underline\omega" class="ee_img tr_noresize" eeimg="1"> . 这八个类型系统可以放在一个立方体上，也就是所谓的** <img src="https://www.zhihu.com/equation?tex=\lambda" alt="\lambda" class="ee_img tr_noresize" eeimg="1"> -立方体**（ <img src="https://www.zhihu.com/equation?tex=\lambda\text{-cube}" alt="\lambda\text{-cube}" class="ee_img tr_noresize" eeimg="1"> 或*Barendregt cube*）. 
 
-![2022-06-13 00-34-08 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【类型论】六、构造演算/2022-06-13 00-34-08 的屏幕截图.png)
+![2022-06-13 00-34-08 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/2022-06-13%2000-34-08%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
-![2022-06-13 00-34-13 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【类型论】六、构造演算/2022-06-13 00-34-13 的屏幕截图.png)
+![2022-06-13 00-34-13 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/2022-06-13%2000-34-13%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 Barendregt发现的最重要结论是这八个不同的类型系统可以只用一套简单的派生规则描述：除了三条初始规则（*initialisation rules*） <img src="https://www.zhihu.com/equation?tex=(sort)" alt="(sort)" class="ee_img tr_noresize" eeimg="1"> ， <img src="https://www.zhihu.com/equation?tex=(var)" alt="(var)" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=(weak)" alt="(weak)" class="ee_img tr_noresize" eeimg="1"> ，我们只需要对于 <img src="https://www.zhihu.com/equation?tex=\Pi" alt="\Pi" class="ee_img tr_noresize" eeimg="1"> 类型的形成规则 <img src="https://www.zhihu.com/equation?tex=(form)" alt="(form)" class="ee_img tr_noresize" eeimg="1"> ，替换规则 <img src="https://www.zhihu.com/equation?tex=(conv)" alt="(conv)" class="ee_img tr_noresize" eeimg="1"> 和每个lambda演算系统最重要的两条应用和抽象规则. 选择对应的 <img src="https://www.zhihu.com/equation?tex=(s_1,s_2)" alt="(s_1,s_2)" class="ee_img tr_noresize" eeimg="1"> ，就可以得到对应的类型系统：
 
-![2022-06-13 00-36-24 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【类型论】六、构造演算/2022-06-13 00-36-24 的屏幕截图.png)
+![2022-06-13 00-36-24 的屏幕截图](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/2022-06-13%2000-36-24%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 ##  <img src="https://www.zhihu.com/equation?tex=\lambda {\rm C}" alt="\lambda {\rm C}" class="ee_img tr_noresize" eeimg="1"> 的性质
 
