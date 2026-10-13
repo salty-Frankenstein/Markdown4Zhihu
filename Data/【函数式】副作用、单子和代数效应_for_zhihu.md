@@ -1,0 +1,290 @@
+---
+title: 【函数式】于是你重新发明了单子
+date: 2026-10-09 21:55:26
+categories: 小课堂
+tags:
+     - 函数式
+     - 范畴论
+     - Haskell
+     - 教程
+---
+
+上回说到，我们可以用函子表示一个代数。例如幺半群，它对应函子 <img src="https://www.zhihu.com/equation?tex=F(X)=X\times X+1" alt="F(X)=X\times X+1" class="ee_img tr_noresize" eeimg="1"> 。这样，例如整数加法幺半群就可以用它的F代数表示，对应一个求值函数：
+
+<!--more-->
+
+```haskell
+data MonoidF a = Mul a a | Unit
+
+intadd :: MonoidF Int -> Int
+intadd Unit      = 0        -- 幺元
+intadd (Mul x y) = x + y    -- 整数加法
+```
+
+不过，细心的读者会发现， <img src="https://www.zhihu.com/equation?tex=X\times X+1\to X" alt="X\times X+1\to X" class="ee_img tr_noresize" eeimg="1"> 这个签名其实并没有对代数等式有任何的约束。我们完全可以把第二行的加法改成其他奇怪的运算，这并不总是构成一个幺半群。我们并不能说幺半群这个结构完全被表示了。那么问题来了，我们如何把代数要满足的公理们也编码进去，发明一种**合法**的代数表示呢？
+
+# 代数的所有表达式
+
+代数的公理是在表达式上的一组等式。所以在考虑这些公理之前，我们需要先表示出代数中的表达式们。既然函子 <img src="https://www.zhihu.com/equation?tex=F(X)=X\times X+1" alt="F(X)=X\times X+1" class="ee_img tr_noresize" eeimg="1"> 编码了幺半群的二元运算以及幺元（0-元运算），那么，只要我们重复嵌套运用这两个规则，我们是不是就可以生成所有的表达式呢？所谓的嵌套，就是指F代数中的函子参数这部分的类型也是F代数的表达式，这不就是我们的递归类型吗？你说得队，我们试试看。我们已经知道递归类型就是取 <img src="https://www.zhihu.com/equation?tex=F" alt="F" class="ee_img tr_noresize" eeimg="1"> 的不动点，我们用 <img src="https://www.zhihu.com/equation?tex=\mu X. F(X)" alt="\mu X. F(X)" class="ee_img tr_noresize" eeimg="1"> 表示。在Haskell中，这对应：
+
+```haskell
+data Fix f = In (f (Fix f))
+ex1, ex2 :: Fix MonoidF
+ex1 = In Unit                         -- e
+ex2 = In (Mul (In Unit) (In Unit))    -- e * e
+```
+
+> 我已经想起来递归类型了，谢谢。没想起来的朋友可以看上一篇。
+
+不错，确实是可以嵌套了，然而叶子节点们只能是原函子中的叶子节点，也就是幺半群例子中的幺元。这是因为我们只有这个幺半群的结构，但是没有具体的集合给我们提供常数（叶子节点们）。方法很简单，我们在不动点的基础上再引入一个自带的叶子节点即可，我们把叶子节点的类型也参数化，就得到了：
+
+```haskell
+data Free f a = Free (f (Free f a)) | Pure a
+```
+
+> 你会发现我稍微调整了一下名字，然而这并不是重点，我只是添加了一个参数`a`，并添加了叶子节点`Pure a`而已。
+
+很好，再试试看！例如，如果我们指定整数集上的幺半群的话：
+
+```haskell
+ex3, ex4, ex5 :: Free MonoidF Int
+ex3 = Pure 42                            -- 42
+ex4 = Free Unit                          -- e
+ex5 = Free (Mul (Free Unit) (Pure 42))   -- e * 42
+```
+
+新的类型很好地完成了任务，可以生成所有整数集上的幺半群的表达式。
+
+> 这是个以幺元或者载体集合中的元素为叶子节点的二叉树。
+
+# 变量和代换
+
+我们已经成功构建了二元运算和幺元以及载体集合中的常量可以组成的所有表达式。不过我们忽视了幺半群的等式。现在让我们重温一下幺半群的等式吧：
+
+<img src="https://www.zhihu.com/equation?tex=(x \times y) \times z = x \times (y \times z)\\
+e \times x= x\times e = x
+" alt="(x \times y) \times z = x \times (y \times z)\\
+e \times x= x\times e = x
+" class="ee_img tr_noresize" eeimg="1">
+要表达等式，我们还需要带变量的表达式。这好像并不难，只要把载体集合换成一个变量的集合就可以了，例如用字符：
+
+```haskell
+Free (Mul (Free (Mul (Pure 'x') (Pure 'y')) (Pure 'z')))
+```
+
+就可以表示 <img src="https://www.zhihu.com/equation?tex=(x\times y)\times z" alt="(x\times y)\times z" class="ee_img tr_noresize" eeimg="1"> 了。变量的目的就是为了占位，表达这个地方可以换成任意的元素，这个操作就是代换。例如，我们可以给定一个赋值 <img src="https://www.zhihu.com/equation?tex=[x\mapsto 1,y\mapsto 2,z\mapsto 3]" alt="[x\mapsto 1,y\mapsto 2,z\mapsto 3]" class="ee_img tr_noresize" eeimg="1"> ，就可以代换为 <img src="https://www.zhihu.com/equation?tex=(1\times 2)\times3" alt="(1\times 2)\times3" class="ee_img tr_noresize" eeimg="1"> 。我们可以把变量的赋值定义成一个函数：
+
+```haskell
+g :: Char -> Int
+g 'x' = 1
+g 'y' = 2
+g 'z' = 3
+g _   = undefined
+```
+
+然后，代换操作就很简单了，对树中叶子节点的地方的`Char`应用这个赋值，就可以把`Free MonoidF Char`变成`Free MonoidF Int`了。是的你发现了，`Free MonoidF a`是个函子，而这个代换操作就是把普通函数`Char -> Int`提升成`Free MonoidF Char -> Free MonoidF Int`。
+
+不过这里还有些不太满意的地方。`g`的定义域是`Char`，但我们其实只用了其中的三个元素，定义域的其他部分都用`undefined`糊弄过去了。更严谨的做法是把定义域改成 <img src="https://www.zhihu.com/equation?tex=\{x,y,z\}" alt="\{x,y,z\}" class="ee_img tr_noresize" eeimg="1"> 这样只有这三个变量的集合。
+
+更进一步的，正如上次提到的类型同构一样，这里作为**字符**存在的 <img src="https://www.zhihu.com/equation?tex=x,y,z" alt="x,y,z" class="ee_img tr_noresize" eeimg="1"> 似乎并没有特殊性，毕竟它们只是占位的，只要是有三个元素的集合，都可以。因此，这个变量集合其实只和它的基数有关，甚至可以是任意集合。例如自然数集，可以理解成是变量的下标 <img src="https://www.zhihu.com/equation?tex=a_i" alt="a_i" class="ee_img tr_noresize" eeimg="1"> 。
+
+更更一般的，对于任意的函数 <img src="https://www.zhihu.com/equation?tex=g:X\to A" alt="g:X\to A" class="ee_img tr_noresize" eeimg="1"> ，我们都可以理解为一组以 <img src="https://www.zhihu.com/equation?tex=x\in X" alt="x\in X" class="ee_img tr_noresize" eeimg="1"> 为索引的变量的赋值 <img src="https://www.zhihu.com/equation?tex=a_x\in A" alt="a_x\in A" class="ee_img tr_noresize" eeimg="1"> 。利用这个函数，我们可以把以 <img src="https://www.zhihu.com/equation?tex=a_x" alt="a_x" class="ee_img tr_noresize" eeimg="1"> 为变量的表达式，解释成对应 <img src="https://www.zhihu.com/equation?tex=A" alt="A" class="ee_img tr_noresize" eeimg="1"> 中元素的表达式。
+
+# 用等式化简表达式
+
+有了表达式，接下来我们可以考虑等式了。如果我们用上面的表示方法，这意味着：
+
+```haskell
+x = Pure 'x'
+y = Pure 'y'
+z = Pure 'z'
+Free (Mul (Free (Mul x y)) z) = Free (Mul x (Free (Mul y z)))
+Free (Mul (Free Unit) x) = Free (Mul x (Free Unit)) = x
+```
+
+这些不同的树，在幺半群的语境下都是相同的，满足等式的表达式（树）都可以视为相等。
+
+> 也就是求所有表达式集合`Free MonoidF a`在幺半群等式下的商集。
+
+找到它并不困难。例如，我们可以先应用结合律，把括号们全都移到最右边，然后把所有当中出现的单位元用单位元律消除掉。不难发现得到的东西和所有非幺元叶子节点的列表是同构的，也就是`List A`。这样 <img src="https://www.zhihu.com/equation?tex=x \times y \times z" alt="x \times y \times z" class="ee_img tr_noresize" eeimg="1"> 可以表示为 <img src="https://www.zhihu.com/equation?tex=[x, y, z]" alt="[x, y, z]" class="ee_img tr_noresize" eeimg="1"> ，单个的元素 <img src="https://www.zhihu.com/equation?tex=x" alt="x" class="ee_img tr_noresize" eeimg="1"> 可以表示为 <img src="https://www.zhihu.com/equation?tex=[x]" alt="[x]" class="ee_img tr_noresize" eeimg="1"> ，而单个的幺元则表示为空列表 <img src="https://www.zhihu.com/equation?tex=[]" alt="[]" class="ee_img tr_noresize" eeimg="1"> 。
+
+> 这里的列表都是有限的，请Haskell友不要惰性入脑过深。
+
+另外，我们知道列表也是个函子，所以我们的新语法的变量替换用最普通的`map`函数就好：
+
+```haskell
+xs :: [Char]
+xs = ['x', 'y', 'z']  --           x * y * z
+xs' = map g xs        -- [1, 2, 3] 1 * 2 * 3
+```
+
+感觉不错。
+
+# 更好的求值
+
+回顾一下我们刚刚做的事：我们利用代数的签名生成了所有的表达式（树），并利用代数的等式商掉了应该相等的那些等式，找到了更好的表达式表示方法 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ A" alt="\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> ，这是一种更适合表达“幺半群”概念的**语法**，所有根据等式应当相等的表达式都对应着 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ A" alt="\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> 中的同一个元素。接下来就是**语义**了，也就是如何定义求值函数，把语法真正解释成一个幺半群。正如之前我们对F代数的讨论，我们确实可以直接定义一个签名为 <img src="https://www.zhihu.com/equation?tex=f:\mathit{List}\ X\to X" alt="f:\mathit{List}\ X\to X" class="ee_img tr_noresize" eeimg="1"> 的求值函数来解释，然而这并不总对应一个合法的幺半群，这说明我们需要对这个求值函数进行必要的约束。
+
+言归正传，终于回到要解决开头提出的问题的时刻了。如何定义满足等式的求值函数呢？
+
+1. 首先，对于每个载体集合中的元素 <img src="https://www.zhihu.com/equation?tex=a" alt="a" class="ee_img tr_noresize" eeimg="1"> ，它对应的在 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ A" alt="\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> 的范式是 <img src="https://www.zhihu.com/equation?tex=[a]" alt="[a]" class="ee_img tr_noresize" eeimg="1"> ，它的求值结果应该就是它自己。如果我们把载体集合 <img src="https://www.zhihu.com/equation?tex=A" alt="A" class="ee_img tr_noresize" eeimg="1"> 中元素 <img src="https://www.zhihu.com/equation?tex=a" alt="a" class="ee_img tr_noresize" eeimg="1"> 的对应范式的操作记作 <img src="https://www.zhihu.com/equation?tex=\eta_A(a)=[a]" alt="\eta_A(a)=[a]" class="ee_img tr_noresize" eeimg="1"> 的话，这个条件就可以写作
+
+<img src="https://www.zhihu.com/equation?tex=f\circ \eta=\mathit{id}\tag{1}
+   " alt="f\circ \eta=\mathit{id}\tag{1}
+   " class="ee_img tr_noresize" eeimg="1">
+   
+2. 接下来就是等式们了。考虑结合律，对于任意三个元素的两种结合方式，用求值函数可以分别表示为
+
+<img src="https://www.zhihu.com/equation?tex=\begin{align}
+   (x\times y)\times z\quad \Longrightarrow\quad &f\ [f\ [x,y],f\ (\eta\ z)]\\
+   x\times (y\times z) \quad \Longrightarrow\quad&f\ [f\ (\eta\ x),f\ [y,z]]
+   \end{align}
+   " alt="\begin{align}
+   (x\times y)\times z\quad \Longrightarrow\quad &f\ [f\ [x,y],f\ (\eta\ z)]\\
+   x\times (y\times z) \quad \Longrightarrow\quad&f\ [f\ (\eta\ x),f\ [y,z]]
+   \end{align}
+   " class="ee_img tr_noresize" eeimg="1">
+   因为 <img src="https://www.zhihu.com/equation?tex=\mathit{List}" alt="\mathit{List}" class="ee_img tr_noresize" eeimg="1"> 是函子，所以 <img src="https://www.zhihu.com/equation?tex=[f a,f b]" alt="[f a,f b]" class="ee_img tr_noresize" eeimg="1"> 可以写成 <img src="https://www.zhihu.com/equation?tex=\mathit{map_f}\ [a,b]" alt="\mathit{map_f}\ [a,b]" class="ee_img tr_noresize" eeimg="1"> ，前两行就可以写成：
+
+<img src="https://www.zhihu.com/equation?tex=\begin{align}
+   f\ [f\ [x,y],f\ (\eta\ z)]=(f \circ \mathit{map}_f)\ [[x,y], [z]]\\
+   f\ [f\ (\eta\ x),f\ [y,z]]=(f \circ \mathit{map}_f)\ [[x],[y, z]]
+   \end{align}
+   " alt="\begin{align}
+   f\ [f\ [x,y],f\ (\eta\ z)]=(f \circ \mathit{map}_f)\ [[x,y], [z]]\\
+   f\ [f\ (\eta\ x),f\ [y,z]]=(f \circ \mathit{map}_f)\ [[x],[y, z]]
+   \end{align}
+   " class="ee_img tr_noresize" eeimg="1">
+   根据结合律，这两者应当相等，这是什么意思呢？也就是说， <img src="https://www.zhihu.com/equation?tex=f\circ \mathit{map}_f" alt="f\circ \mathit{map}_f" class="ee_img tr_noresize" eeimg="1"> 这个函数，对于 <img src="https://www.zhihu.com/equation?tex=[[x,y],[z]]" alt="[[x,y],[z]]" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=[[x],[y,z]]" alt="[[x],[y,z]]" class="ee_img tr_noresize" eeimg="1"> 应该当成一样的，因为它们运算的元素和顺序都是一样的，只是结合方式不一样。
+
+   同理，我们看看幺元的单位律。在范式中，我们用空列表 <img src="https://www.zhihu.com/equation?tex=[]" alt="[]" class="ee_img tr_noresize" eeimg="1"> 表示幺元，那么幺元的求值自然是 <img src="https://www.zhihu.com/equation?tex=f\ []" alt="f\ []" class="ee_img tr_noresize" eeimg="1"> 。对于任意载体集合的元素 <img src="https://www.zhihu.com/equation?tex=a" alt="a" class="ee_img tr_noresize" eeimg="1"> ，我们看看单位律：
+
+<img src="https://www.zhihu.com/equation?tex=\begin{align}
+   e\times x\quad \Longrightarrow\quad&f\ [f\ [],f (\eta\ x)]=(f\circ\mathit{map}_f)\ [[], [x]]\\
+   x \times e\quad \Longrightarrow\quad&f\ [f (\eta\ x),f\ []]=(f\circ\mathit{map}_f)\ [[x],[]]\\
+   x\quad \Longrightarrow\quad&f\ [f (\eta\ x)]=(f\circ\mathit{map}_f)\ [[x]]\\
+   \end{align}
+   " alt="\begin{align}
+   e\times x\quad \Longrightarrow\quad&f\ [f\ [],f (\eta\ x)]=(f\circ\mathit{map}_f)\ [[], [x]]\\
+   x \times e\quad \Longrightarrow\quad&f\ [f (\eta\ x),f\ []]=(f\circ\mathit{map}_f)\ [[x],[]]\\
+   x\quad \Longrightarrow\quad&f\ [f (\eta\ x)]=(f\circ\mathit{map}_f)\ [[x]]\\
+   \end{align}
+   " class="ee_img tr_noresize" eeimg="1">
+   同样的，单位律告诉我们这三者应当相等，也就是说对于 <img src="https://www.zhihu.com/equation?tex=[[x],[]]" alt="[[x],[]]" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=[[],[x]]" alt="[[],[x]]" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=[[x]]" alt="[[x]]" class="ee_img tr_noresize" eeimg="1"> 应该当成一样的，因为它们只是多乘了单位元。
+
+   我们很神奇的发现，幺半群的等式们，本质上都是在对 <img src="https://www.zhihu.com/equation?tex=f\circ \mathit{map}_f:\mathit{List}^2A\to A" alt="f\circ \mathit{map}_f:\mathit{List}^2A\to A" class="ee_img tr_noresize" eeimg="1"> 这个函数的行为进行约束。
+
+## 范式的范式
+
+那么问题来了， <img src="https://www.zhihu.com/equation?tex=\mathit{List}^2A" alt="\mathit{List}^2A" class="ee_img tr_noresize" eeimg="1"> 到底是什么呢？在我们的设计中，列表是我们幺半群表达式的**范式**，那么列表的列表就是以**范式**为元素进行运算的幺半群的**范式**。我们的范式是去掉所有括号和幺元的表达式，也就是元素的列表，现在我们考虑两个范式运算之后的范式又是什么呢？
+
+-  <img src="https://www.zhihu.com/equation?tex=[a,b,\dots]\times [c,d,\dots]" alt="[a,b,\dots]\times [c,d,\dots]" class="ee_img tr_noresize" eeimg="1"> ，左边是把 <img src="https://www.zhihu.com/equation?tex=a,b,\dots" alt="a,b,\dots" class="ee_img tr_noresize" eeimg="1"> 乘起来，右边是把 <img src="https://www.zhihu.com/equation?tex=c,d,\dots" alt="c,d,\dots" class="ee_img tr_noresize" eeimg="1"> 乘起来，于是同样可以用结合律去掉括号，变成 <img src="https://www.zhihu.com/equation?tex=[a,b,\dots,c,d,\dots]" alt="[a,b,\dots,c,d,\dots]" class="ee_img tr_noresize" eeimg="1"> 。
+-  <img src="https://www.zhihu.com/equation?tex=[]\times xs" alt="[]\times xs" class="ee_img tr_noresize" eeimg="1"> ，我们知道 <img src="https://www.zhihu.com/equation?tex=[]" alt="[]" class="ee_img tr_noresize" eeimg="1"> 对应范式中的幺元，因此利用左单位元律结果就是 <img src="https://www.zhihu.com/equation?tex=xs" alt="xs" class="ee_img tr_noresize" eeimg="1"> 。同理 <img src="https://www.zhihu.com/equation?tex=xs\times []" alt="xs\times []" class="ee_img tr_noresize" eeimg="1"> 也是 <img src="https://www.zhihu.com/equation?tex=xs" alt="xs" class="ee_img tr_noresize" eeimg="1"> 。
+
+是的你发现了，这个 <img src="https://www.zhihu.com/equation?tex=\times" alt="\times" class="ee_img tr_noresize" eeimg="1"> 就是普通的列表连接运算，我们通过根据幺半群的性质，顺利定义了范式之间的运算。不过更重要的是，所有范式自己就构成一个幺半群：幺元是空列表，而二元运算是连接。因为它是个幺半群，我们可以用一个签名为 <img src="https://www.zhihu.com/equation?tex=\mathit{List}^2 A\to \mathit{List}\ A" alt="\mathit{List}^2 A\to \mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> 的求值函数来表示它。是的，它就是`concat`函数。如果我们把这个操作也起个名字，记作 <img src="https://www.zhihu.com/equation?tex=\mu_A:\mathit{List}^2\ A\to\mathit{List}\ A" alt="\mu_A:\mathit{List}^2\ A\to\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> ​。它需要满足的性质是：
+
+- 结合律： <img src="https://www.zhihu.com/equation?tex=\mu_A\ [[x,y],[z]]=\mu_A\ [[x],[y,z]]=[x,y,z]" alt="\mu_A\ [[x,y],[z]]=\mu_A\ [[x],[y,z]]=[x,y,z]" class="ee_img tr_noresize" eeimg="1"> 。
+- 单位律： <img src="https://www.zhihu.com/equation?tex=\mu_A\ [[],[x]]=\mu_A\ [[x],[]]=\mu_A\ [[x]]=[x]" alt="\mu_A\ [[],[x]]=\mu_A\ [[x],[]]=\mu_A\ [[x]]=[x]" class="ee_img tr_noresize" eeimg="1"> 。
+
+经过 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 的预处理后，所有在幺半群等式下视作相等的表达式们，都重新变成了范式。在等式的保证下，直接用 <img src="https://www.zhihu.com/equation?tex=f" alt="f" class="ee_img tr_noresize" eeimg="1"> 计算范式，得到的和手动地用 <img src="https://www.zhihu.com/equation?tex=f" alt="f" class="ee_img tr_noresize" eeimg="1"> 依次计算必定是相等的。如果 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 满足了“尊重等式的化简”的话，我们就可以用它来约束求值函数的行为了。于是我们得到了第二个等式：
+
+<img src="https://www.zhihu.com/equation?tex=f\circ \mathit{map}_f = f \circ \mu\tag{2}
+" alt="f\circ \mathit{map}_f = f \circ \mu\tag{2}
+" class="ee_img tr_noresize" eeimg="1">
+
+# 编码公理
+
+总结一下，目前为止我们通过对所有表达式求商得到了表达式的范式 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ A" alt="\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> ，求值函数就变成了 <img src="https://www.zhihu.com/equation?tex=f:\mathit{List}\ A\to A" alt="f:\mathit{List}\ A\to A" class="ee_img tr_noresize" eeimg="1"> 。接着，我们把代数的公理对求值 <img src="https://www.zhihu.com/equation?tex=f" alt="f" class="ee_img tr_noresize" eeimg="1"> 的要求，转化为了关于范式上的两个操作 <img src="https://www.zhihu.com/equation?tex=\eta" alt="\eta" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 的条件。
+
+现在思路已经很清晰了。对于一般的代数用相同的方法，得到范式函子 <img src="https://www.zhihu.com/equation?tex=T" alt="T" class="ee_img tr_noresize" eeimg="1"> ，以及两个操作 <img src="https://www.zhihu.com/equation?tex=\eta_A: A\to TA" alt="\eta_A: A\to TA" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu_A:T^2 A \to T A" alt="\mu_A:T^2 A \to T A" class="ee_img tr_noresize" eeimg="1"> 。这样，对于集合 <img src="https://www.zhihu.com/equation?tex=X" alt="X" class="ee_img tr_noresize" eeimg="1"> ，我们可以定义新版本的函子代数 <img src="https://www.zhihu.com/equation?tex=f:TX\to X" alt="f:TX\to X" class="ee_img tr_noresize" eeimg="1"> ，它通过 <img src="https://www.zhihu.com/equation?tex=(1)" alt="(1)" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=(2)" alt="(2)" class="ee_img tr_noresize" eeimg="1"> 这两个条件保证符合代数公理。
+
+![1](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/1.png)
+
+![2](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/2.png)
+
+这意味着我们可以用 <img src="https://www.zhihu.com/equation?tex=(T,\eta,\mu)" alt="(T,\eta,\mu)" class="ee_img tr_noresize" eeimg="1"> 这个三元组来表示这个代数结构，具体的新版本的代数 <img src="https://www.zhihu.com/equation?tex=f:TX\to X" alt="f:TX\to X" class="ee_img tr_noresize" eeimg="1"> ，我们姑且称为**T代数**吧。下面的例子中 <img src="https://www.zhihu.com/equation?tex=\mathit{List}" alt="\mathit{List}" class="ee_img tr_noresize" eeimg="1"> 用 <img src="https://www.zhihu.com/equation?tex=T" alt="T" class="ee_img tr_noresize" eeimg="1"> 表示的时候，意思是这个结论可以推广到一般的T代数。
+
+不过，正如刚刚讨论的列表的例子，并不是所有的 <img src="https://www.zhihu.com/equation?tex=\eta: A\to TA" alt="\eta: A\to TA" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu:T^2 A \to T A" alt="\mu:T^2 A \to T A" class="ee_img tr_noresize" eeimg="1"> 签名的操作都可以。我们必须把代数的结构编码进这两个操作，它们才能有效地约束求值函数 <img src="https://www.zhihu.com/equation?tex=f:TX\to X" alt="f:TX\to X" class="ee_img tr_noresize" eeimg="1"> 的行为。
+
+## 免费的代数
+
+首先，既然列表 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ A" alt="\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> 自己也构成一个以 <img src="https://www.zhihu.com/equation?tex=\mu_A:\mathit{List}^2\ A\to\mathit{List}\ A" alt="\mu_A:\mathit{List}^2\ A\to\mathit{List}\ A" class="ee_img tr_noresize" eeimg="1"> 为求值函数的幺半群，它也应该满足我们上述的两个等式。应用上它们我们可以得到以下的交换图：
+
+![3](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/3.png)
+
+![4](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/4.png)
+
+于是我们得到了关于 <img src="https://www.zhihu.com/equation?tex=\eta" alt="\eta" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 的一组条件：
+
+<img src="https://www.zhihu.com/equation?tex=\begin{align}
+\mu_A\circ\eta_{TA}&=id_{TA}\tag{3}\\
+ \mu_A\circ  T\mu_A&=\mu_{A} \circ \mu_{TA}\tag{4}
+\end{align}
+" alt="\begin{align}
+\mu_A\circ\eta_{TA}&=id_{TA}\tag{3}\\
+ \mu_A\circ  T\mu_A&=\mu_{A} \circ \mu_{TA}\tag{4}
+\end{align}
+" class="ee_img tr_noresize" eeimg="1">
+
+## 自由性
+
+然而列表自己是幺半群还不够，如果我们宣称它是**所有**幺半群的范式是表达所有幺半群的语法的话，它理应能被解释成任意的幺半群。怎么说明这一点呢？
+
+首先，类似于F代数，我们也可以定义T代数之间的同态 <img src="https://www.zhihu.com/equation?tex=m:A\to B" alt="m:A\to B" class="ee_img tr_noresize" eeimg="1"> ：
+
+![5](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/5.png)
+
+我们任取一个幺半群 <img src="https://www.zhihu.com/equation?tex=M" alt="M" class="ee_img tr_noresize" eeimg="1"> ，一个任意的函数 <img src="https://www.zhihu.com/equation?tex=g:X\to |M|" alt="g:X\to |M|" class="ee_img tr_noresize" eeimg="1"> 代表一组以 <img src="https://www.zhihu.com/equation?tex=x\in X" alt="x\in X" class="ee_img tr_noresize" eeimg="1"> 为索引的变量赋值 <img src="https://www.zhihu.com/equation?tex=a_x\in |M|" alt="a_x\in |M|" class="ee_img tr_noresize" eeimg="1"> ，我们的变量表达式的语法就是 <img src="https://www.zhihu.com/equation?tex=\mathit{List}\ X" alt="\mathit{List}\ X" class="ee_img tr_noresize" eeimg="1"> 。那么，我们应该存在一个同态 <img src="https://www.zhihu.com/equation?tex=\bar{g}:\mathit{List}\ X\to |M|" alt="\bar{g}:\mathit{List}\ X\to |M|" class="ee_img tr_noresize" eeimg="1"> ，把幺半群语法解释为**对应**幺半群 <img src="https://www.zhihu.com/equation?tex=M" alt="M" class="ee_img tr_noresize" eeimg="1"> 的语义，并且这个解释应当是**唯一**的。另外，对于每个单个的变量，这个同态一定能够按照 <img src="https://www.zhihu.com/equation?tex=g" alt="g" class="ee_img tr_noresize" eeimg="1"> 的赋值解释成 <img src="https://www.zhihu.com/equation?tex=|M|" alt="|M|" class="ee_img tr_noresize" eeimg="1"> 中的对应元素。这个条件用交换图表示如下：
+
+![6](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/6.png)
+
+这个条件被称为**自由性**。
+
+## 最后一个条件
+
+现在我们把这个性质加上，会发生什么神奇的事情。注意到 <img src="https://www.zhihu.com/equation?tex=\eta_X:X\to TX" alt="\eta_X:X\to TX" class="ee_img tr_noresize" eeimg="1"> 也可以看做一个以 <img src="https://www.zhihu.com/equation?tex=X" alt="X" class="ee_img tr_noresize" eeimg="1"> 为索引的变量集，解释到 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 的赋值。根据自由性， <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 到 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 必然有一个唯一的同态，我正好知道一个，就是 <img src="https://www.zhihu.com/equation?tex=id_{TX}" alt="id_{TX}" class="ee_img tr_noresize" eeimg="1"> ，这样上面的交换图就变成了：
+
+![7](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/7.png)
+
+同时，因为 <img src="https://www.zhihu.com/equation?tex=T" alt="T" class="ee_img tr_noresize" eeimg="1"> 是个函子，我们可以提升 <img src="https://www.zhihu.com/equation?tex=T\eta_X:TX\to T^2 X" alt="T\eta_X:TX\to T^2 X" class="ee_img tr_noresize" eeimg="1"> ，再用 <img src="https://www.zhihu.com/equation?tex=\mu_X" alt="\mu_X" class="ee_img tr_noresize" eeimg="1"> 求值成 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> ，这样我们就得到了另一个从 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 到 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 的箭头 <img src="https://www.zhihu.com/equation?tex=\mu_X\circ T\eta_X" alt="\mu_X\circ T\eta_X" class="ee_img tr_noresize" eeimg="1"> 。那么它是T同态吗？
+
+首先这个箭头左右两边连接的都是 <img src="https://www.zhihu.com/equation?tex=\mu_X:T^2X\to TX" alt="\mu_X:T^2X\to TX" class="ee_img tr_noresize" eeimg="1"> 这个代数，我们把交换图补完：
+
+![9](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/9.png)
+
+左边的方块是 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 的自然性，而右边的方块是我们的条件 <img src="https://www.zhihu.com/equation?tex=(4)" alt="(4)" class="ee_img tr_noresize" eeimg="1"> 。它确实是个同态。根据自由性， <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 到 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 的同态是唯一的，所以它必须等于 <img src="https://www.zhihu.com/equation?tex=id_{TX}" alt="id_{TX}" class="ee_img tr_noresize" eeimg="1"> 。
+
+![8](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/8.png)
+
+于是我们就得到了让 <img src="https://www.zhihu.com/equation?tex=\eta" alt="\eta" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu" alt="\mu" class="ee_img tr_noresize" eeimg="1"> 满足自由性的条件：
+
+<img src="https://www.zhihu.com/equation?tex=\mu_A\circ T\eta_A = id_{TA}\tag{5}
+" alt="\mu_A\circ T\eta_A = id_{TA}\tag{5}
+" class="ee_img tr_noresize" eeimg="1">
+
+# 有公理的代数
+
+终于搞定了！让我们整理一下我们的成果。对于自函子 <img src="https://www.zhihu.com/equation?tex=T" alt="T" class="ee_img tr_noresize" eeimg="1"> ，我们定义两个自然变换 <img src="https://www.zhihu.com/equation?tex=\eta_A:A\to TA" alt="\eta_A:A\to TA" class="ee_img tr_noresize" eeimg="1"> 和 <img src="https://www.zhihu.com/equation?tex=\mu_A:T^2A \to TA" alt="\mu_A:T^2A \to TA" class="ee_img tr_noresize" eeimg="1"> ，且满足上述的条件 <img src="https://www.zhihu.com/equation?tex=(3),(4),(5)" alt="(3),(4),(5)" class="ee_img tr_noresize" eeimg="1"> ，对应这两个交换图：
+
+![10](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/10.png)
+
+![4](https://raw.githubusercontent.com/salty-Frankenstein/Markdown4Zhihu/master/Data/【函数式】副作用、单子和代数效应/4.png)
+
+我们就称三元组 <img src="https://www.zhihu.com/equation?tex=(T,\eta,\mu)" alt="(T,\eta,\mu)" class="ee_img tr_noresize" eeimg="1"> 为一个**单子（monad）**。上述的三条性质称为**单子律**。
+
+> 是的，我们顺便重新发明了单子。
+
+在这个单子上，取一个载体对象 <img src="https://www.zhihu.com/equation?tex=X" alt="X" class="ee_img tr_noresize" eeimg="1"> ，和一个求值态射 <img src="https://www.zhihu.com/equation?tex=f:TX\to X" alt="f:TX\to X" class="ee_img tr_noresize" eeimg="1"> 。如果 <img src="https://www.zhihu.com/equation?tex=f" alt="f" class="ee_img tr_noresize" eeimg="1"> 能满足上述的 <img src="https://www.zhihu.com/equation?tex=(1),(2)" alt="(1),(2)" class="ee_img tr_noresize" eeimg="1"> 这两条性质的话，二元组 <img src="https://www.zhihu.com/equation?tex=(X,f)" alt="(X,f)" class="ee_img tr_noresize" eeimg="1"> 可以表示一个具体的代数，称为**Eilenberg–Moore代数**，或者叫单子代数。
+
+其中，对于任意的对象 <img src="https://www.zhihu.com/equation?tex=X" alt="X" class="ee_img tr_noresize" eeimg="1"> ， <img src="https://www.zhihu.com/equation?tex=(TX,\mu)" alt="(TX,\mu)" class="ee_img tr_noresize" eeimg="1"> 自动构成一个代数。正如上面推导的，由于单子律，它满足自由性，称为 <img src="https://www.zhihu.com/equation?tex=T" alt="T" class="ee_img tr_noresize" eeimg="1"> 的**自由代数**。自由指的是 <img src="https://www.zhihu.com/equation?tex=TX" alt="TX" class="ee_img tr_noresize" eeimg="1"> 的结构就是代数自身公理所生长出来的，是纯语法的、最小的不包括其他限制的、无拘无束的代数。
+
+> 另外，也可以理解为，对于任意对象 <img src="https://www.zhihu.com/equation?tex=X" alt="X" class="ee_img tr_noresize" eeimg="1"> ，都能免费（for free）的得到一个代数。
+
+正如上面我们推导的那样，Eilenberg–Moore代数是上一篇中F代数的升级版，可以完美地把代数需要满足的公理也编码进函子以及单子律里。我们已经示例了如何从幺半群的定义推导出它的单子代数。事实上，所有的泛代数意义下的代数，都对应一个Eilenberg–Moore代数。
+
+# 参考
+
+1. F. W. Lawvere. [Functorial Semantics of Algebraic Theories](http://www.tac.mta.ca/tac/reprints/articles/5/tr5abs.html). Reprints in *Theory and Applications of Categories* No. 5, 2004 (1963).
+2. S. Eilenberg, J. C. Moore. [Adjoint Functors and Triples](https://doi.org/10.1215/ijm/1256068141). *Illinois Journal of Mathematics* 9(3), 1965, 381–398.
+3. J. Beck. [Triples, Algebras and Cohomology](http://www.tac.mta.ca/tac/reprints/articles/2/tr2abs.html). Reprints in *Theory and Applications of Categories* No. 2, 2003 (1967).
+4. J. A. Goguen, J. W. Thatcher, E. G. Wagner, J. B. Wright. [Initial Algebra Semantics and Continuous Algebras](https://dl.acm.org/doi/10.1145/321992.321997). *Journal of the ACM* 24(1), 1977, 68–95.
+5. G. D. Plotkin, J. Power. [Notions of Computation Determine Monads](https://link.springer.com/chapter/10.1007/3-540-45931-6_24). FoSSaCS 2002, LNCS 2303, 342–356.
